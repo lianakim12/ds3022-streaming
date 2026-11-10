@@ -5,31 +5,31 @@ Tick them off in your own copy. Add an entry to **PROGRESS.md** (done / next / b
 ## Session 1 · Thu 05 Nov
 
 ### Checkpoint A: source and topic design
-- [ ] `git remote -v` shows **your** `ds3022-streaming` repository; the kit is unzipped into `project3/` and pushed
-- [ ] Probes run for at least two sources; one source chosen
-- [ ] `SOURCE_CARD.md` complete with **measured** numbers (rate, volume plan, key, duplicate identity, draft question)
-- [ ] Self-check in section 7 of the card: every box ticked
-- [ ] Repository private with the instructor added as collaborator (or kept public, your choice)
+- [x] `git remote -v` shows **your** `ds3022-streaming` repository; the kit is unzipped into `project3/` and pushed
+- [x] Probes run for at least two sources; one source chosen
+- [x] `SOURCE_CARD.md` complete with **measured** numbers (rate, volume plan, key, duplicate identity, draft question)
+- [x] Self-check in section 7 of the card: every box ticked
+- [x] Repository private with the instructor added as collaborator (or kept public, your choice)
 
 ### Checkpoint B: producer
-- [ ] Class scripts copied into `project3/` and committed before you change them
-- [ ] Topic created with `rpk topic create <topic> -p 3 -r 3` **before** the producer runs
-- [ ] Every message wrapped in the same envelope (`{"action": ..., "data": ...}`), key as on the card
-- [ ] At least 1,000 messages in the topic, spread over 3 partitions; Console screenshot in `docs/`
-- [ ] The producer survives a dropped connection (pause, reconnect) and logs what it skips
+- [x] Class scripts copied into `project3/` and committed before you change them
+- [x] Topic created with `rpk topic create <topic> -p 3 -r 3` **before** the producer runs
+- [x] Every message wrapped in the same envelope (`{"action": ..., "data": ...}`), key as on the card
+- [x] At least 1,000 messages in the topic, spread over 3 partitions; Console screenshot in `docs/`
+- [x] The producer survives a dropped connection (pause, reconnect) and logs what it skips
 
 ## Session 2 · Mon 09 Nov
 
 ### Checkpoint C: lander writes raw Parquet
-- [ ] `to_row()` keeps partition, offset, key, `action`, `landed_at`, `raw` + your own columns
-- [ ] Batches of 1000 records or 60 s, `.tmp` then rename, offsets stored only after the file exists
-- [ ] Row count in `data/raw/` matches the messages in the topic
+- [x] `to_row()` keeps partition, offset, key, `action`, `landed_at`, `raw` + your own columns
+- [x] Batches of 1000 records or 60 s, `.tmp` then rename, offsets stored only after the file exists
+- [x] Row count in `data/raw/` matches the messages in the topic
 
 ### Checkpoint D: chaos round (steps in [CHAOS_CARDS.md](CHAOS_CARDS.md))
-- [ ] Card D1 (crash between file and offsets) with numbers before and after
-- [ ] Card D2 (poison message) with numbers before and after
-- [ ] At least one of D3, D4, D5
-- [ ] "Chaos round" table in README.md
+- [x] Card D1 (crash between file and offsets) with numbers before and after
+- [x] Card D2 (poison message) with numbers before and after
+- [x] At least one of D3, D4, D5
+- [x] "Chaos round" table in README.md
 
 ## Session 3 · Thu 12 Nov
 

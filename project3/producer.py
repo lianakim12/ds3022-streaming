@@ -98,6 +98,31 @@ def live(producer):
         time.sleep(EVERY)
 
 
+# def live(producer):
+#     """Fetch one snapshot and publish it twice. Used for D5 chaos round"""
+#     try:
+#         r = requests.get(URL, timeout=60)
+#         r.raise_for_status()
+#         body = r.json()
+
+#         states = body.get("states") or []
+
+#         for repeat in range(2):
+#             for s in states:
+#                 state = dict(zip(STATE_FIELDS, s))
+#                 state["snapshot_time"] = body.get("time")
+#                 send(producer, {"action": "poll", "data": state})
+
+#             logging.info(
+#                 "Snapshot %s sent (copy %d/2)",
+#                 body.get("time"), repeat + 1
+#             )
+#         producer.flush()
+#         logging.info("Producer flushed successfully")
+#     except requests.RequestException as e:
+#         logging.warning("Request failed: %r", e)
+
+
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "live"
     app = Application(broker_address=BROKER, loglevel="WARNING")
