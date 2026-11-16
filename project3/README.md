@@ -1,4 +1,4 @@
-# TODO: your project title
+# OpenSky Streaming Pipeline
 
 **Author:** Liana Kim
 **DS 3022 Data Project 3, Fall 2026**
@@ -28,7 +28,7 @@ python flow.py data/sample # run the flow on the committed sample dataset withou
 
 ## Architecture
 
-_(replace: a diagram (an image in docs/ or a text diagram) of producer → topic → lander → raw Parquet → flow tasks → tables → charts, with the names of your files, topic, tables and charts.)_
+![Architecture Diagram](docs/diagram.png)
 
 ## Design decisions
 
