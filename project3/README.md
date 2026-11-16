@@ -10,6 +10,7 @@ The data source of this project is OpenSky Network via the URL https://opensky-n
 ## How to run
 
 ```bash
+# 1. Set up the environment
 cd ds3022-streaming # enter cloned repository
 python3 -m venv .venv # create virtual environment - use if macOS/Linux
 python -m venv .venv # create virtual environment - use if Windows (Powershell)
@@ -17,12 +18,23 @@ source .venv/bin/activate # activate virtual environment - use if macOS/Linux
 .venv\Scripts\Activate.ps1 # activate virtual environment - use if Windows (Powershell)
 pip install -r requirements.txt # install required packages
 cd project3 # switch into project3 folder
+
+# 2. Start the Redpanda cluster
 docker compose up -d # start the Redpanda cluster
 docker exec -it redpanda-0 rpk topic create opensky_aircraft_states -p 3 -r 3 
  # create the topic with 3 partitions and replication factor 3
 docker exec -it redpanda-0 rpk cluster info # check cluster status and broker information
-python producer.py # run in Terminal 1 to fetch data
-python lander.py # run in Terminal 2 to store data
+
+# 3. Collect and store data (optional)
+python producer.py # Terminal 1: fetch data and publish to Kafka
+python lander.py # Terminal 2: consume Kafka messages and store them as parquet files
+
+# 4. Start the Prefect server
+prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api # Terminal 3: configure local Prefect server
+prefect server start # Terminal 3: start the local Prefect server and keep it running
+
+# 5. Run the Prefect flow
+python flow.py # run the flow on collected Parquet data (if step 3 was taken)
 python flow.py data/sample # run the flow on the committed sample dataset without Kafka
 ```
 

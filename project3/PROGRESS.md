@@ -23,7 +23,9 @@ Add to the entry at the end of every class, and whenever you stop working. Short
 Chart swap with a peer: "This chart shows the top 10 countries based on the total number of observed airborne aircraft. I can see that the U.S. has a much greater number of airborne aircrafts than all of the other countries shown." Since the peer's findings align with the intended findings, no further edits were made.
 
 ## Session 4 · Mon 16 Nov
-- Done:
-- Raw records so far:
-- Next:
-- Blocked:
+- Done: Peer test
+- Raw records so far: 324,561
+- Next: check_project.py READY, Self column, tag dp3-submit, submit
+- Blocked: nothing
+
+Peer test: "There is no requirements.txt in the repo. Also, the README instructions did not include starting the Prefect server before running python flow.py data/sample." To fix these issues, requirements.txt was added to the repo and the README's How to run section was updated to include prefect server start prior to running the flow.
