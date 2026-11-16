@@ -54,7 +54,7 @@ Paste one message from the probe (shorten long text fields):
 - If the same thing can arrive in several versions, which one do I keep? Only keep one record of a unique icao24 + time_position and drop the rest of the duplicates.
 
 ## 6. Research question (draft)
-- One question I could answer with time windows, a comparison, an anomaly or a join: How does the number of aircraft observed in the sky change over time, and when is air traffic busiest?
+- One question I could answer with time windows, a comparison, an anomaly or a join: Which countries have the highest number of observed airborne aircraft in the collected dataset?
 
 ## 7. Self-check (checkpoint A)
 Tick a box by changing `[ ]` to `[x]`. If a box stays empty, fix the card or choose another source from SOURCES.md. `kit/check_project.py` counts these boxes.
