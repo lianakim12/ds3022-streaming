@@ -75,7 +75,7 @@ From the flow log on the full data (screenshot in `docs/`):
 | Raw records landed | 324561 | 5000 |
 | Malformed (kept in raw) | 1 | 0 |
 | Unique Kafka records | 321659 | 4975 |
-| Unique TODO (your entity) | 257080 | 4952 |
+| Unique positions | 257080 | 4952 |
 
 ## Challenges / Obstacles
 
