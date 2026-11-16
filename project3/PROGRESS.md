@@ -15,10 +15,13 @@ Add to the entry at the end of every class, and whenever you stop working. Short
 - Blocked: nothing
 
 ## Session 3 · Thu 12 Nov
-- Done:
-- Raw records so far:
-- Next:
-- Blocked:
+- Done: flow.py, chart, flow and chart for sample data, answered research question
+- Raw records so far: 324,561
+- Next: peer review
+- Blocked: nothing
+
+Chart swap with a peer: "This chart shows the top 10 countries based on the total number of observed airborne aircraft. I can see that the U.S. has a much greater number of airborne aircrafts than all of the other countries shown. I still wonder what the total miles flown are for each country. For example, China is the second country listed; however, how does it compare to mileage flown?"
+The peer's findings align with the intended findings, so no further edits were made.
 
 ## Session 4 · Mon 16 Nov
 - Done:

@@ -47,10 +47,10 @@ From the flow log on the full data (screenshot in `docs/`):
 
 | Number | Full data | Sample (`data/sample`) |
 |---|---:|---:|
-| Raw records landed | TODO | TODO |
-| Malformed (kept in raw) | TODO | TODO |
-| Unique Kafka records | TODO | TODO |
-| Unique TODO (your entity) | TODO | TODO |
+| Raw records landed | 324561 | 5000 |
+| Malformed (kept in raw) | 1 | 0 |
+| Unique Kafka records | 321659 | 4975 |
+| Unique TODO (your entity) | 257080 | 4952 |
 
 ## Challenges / Obstacles
 
