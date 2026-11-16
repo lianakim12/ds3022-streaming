@@ -58,13 +58,11 @@ _(replace: what this source made hard in gathering, processing and analysis, and
 
 ## Analysis
 
-_(replace: one clear paragraph. Your research question, what the data shows, one finding that surprised you or is not obvious, and one limitation of your data or method.)_
+My research question is a comparison question: Which countries have the highest number of observed airborne aircraft in the collected dataset? My chart is located in charts/aircraft_by_country.png and is titled Top 10 Countries by Number of Observed Airborne Aircraft. From this chart, the reader can see the top 10 countries with the highest number of observed airborne aircraft, with the United States having the highest number out of all countries, with China coming second and UK coming third.  One finding that surprised me is that the US ranks first by a significant amount. One limitation of my method is that it was specifically filtered for airborne aircrafts, not aircrafts on the ground. If a reader wanted to see results for all aircrafts, then this chart cannot answer that question.
 
 ## Plot / Visualization
 
-_(replace: at least one chart, saved in charts/ and shown here. Give it a title and labelled axes with units.)_
-
-![TODO chart title](charts/TODO.png)
+![Top 10 Countries by Number of Observed Airborne Aircraft](charts/aircraft_by_country.png)
 
 ## Reflection
 
