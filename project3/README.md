@@ -1,21 +1,29 @@
 # TODO: your project title
 
-**Author:** TODO
+**Author:** Liana Kim
 **DS 3022 Data Project 3, Fall 2026**
-
-> There is no interview for this project: this README is where you explain and defend your pipeline. Fill in the title, your name and every italic placeholder, then delete this note. Keep the headings: `kit/check_project.py` looks for them.
 
 ## Data source
 
-_(replace: what source, which URL or stream, pull or push, what one message contains. Mention any account, key or User-Agent needed. If you replay an archive rather than stream live, say so.)_
+The data source of this project is OpenSky Network via the URL https://opensky-network.org/api/states/all. Live REST API polling method is used to pull the data rather than replayed from an archived dataset. Each message contains icao24, callsign, origin_country, time_position, last_contact, longitude, latitude, baro_altitude, on_ground, velocity, true_track, vertical_rate, sensors, geo_altitude, squawk, spi, position_source, and snapshot_time. There are no account, key, or User-Agent required for this data.
 
 ## How to run
 
-_(replace: the exact commands, in order, from a fresh clone. A classmate will follow them in Session 4 (Mon 16 Nov) without asking you. Include: virtual environment and `pip install`, starting the cluster, creating the topic, running the producer and lander, running the flow on the full data and on the sample:)_
-
 ```bash
-cd project3
-python flow.py data/sample      # runs without Kafka, on the committed sample
+cd ds3022-streaming # enter cloned repository
+python3 -m venv .venv # create virtual environment - use if macOS/Linux
+python -m venv .venv # create virtual environment - use if Windows (Powershell)
+source .venv/bin/activate # activate virtual environment - use if macOS/Linux
+.venv\Scripts\Activate.ps1 # activate virtual environment - use if Windows (Powershell)
+pip install -r requirements.txt # install required packages
+cd project3 # switch into project3 folder
+docker compose up -d # start the Redpanda cluster
+docker exec -it redpanda-0 rpk topic create opensky_aircraft_states -p 3 -r 3 
+ # create the topic with 3 partitions and replication factor 3
+docker exec -it redpanda-0 rpk cluster info # check cluster status and broker information
+python producer.py # run in Terminal 1 to fetch data
+python lander.py # run in Terminal 2 to store data
+python flow.py data/sample # run the flow on the committed sample dataset without Kafka
 ```
 
 ## Architecture
@@ -26,12 +34,17 @@ _(replace: a diagram (an image in docs/ or a text diagram) of producer → topic
 
 Answer each in 2-4 sentences, in your own words, with your own numbers.
 
-1. **Key and partitions.** _(replace: which key, why, and what it guarantees about order. What would go wrong with another key?)_
-2. **Batch size and time.** _(replace: your batch size and time limit. With your source's rate, which rule closes most batches? How many files per hour does that make?)_
-3. **Offsets after the file.** _(replace: what happens if the lander crashes after writing a file but before storing offsets, and why you accept that.)_
-4. **Duplicates.** _(replace: what makes two records the same Kafka record, and what makes them the same thing. Which SQL removes each kind?)_
-5. **Windows and time.** _(replace: which time column your analysis uses (event time or landing time), which window size, and why.)_
-6. **Ten times the volume.** _(replace: what in your pipeline would break or slow down first at 10x your rate, and what you would change.)_
+1. **Key and partitions.** _(replace: which key, why, and what it guarantees about order. What would go wrong with another key?)_ The Kafka key is icao24, which is the unique ICAO transponder identifier assigned to an aircraft. It was chosen because it allows the flow to group all observations belonging to the same aircraft together. Kafka uses the key to determine which partition a message is assigned to, meaning records with the same icao24 key are sent to the same partition. This guarantees that observations for the same aircraft maintain their order within that partition. If another key were used, observations from the same aircraft could be distributed across different partitions. This would make it harder to track an aircraft's movements over time and could result in records being processed out of order relative to one another.
+
+2. **Batch size and time.** _(replace: your batch size and time limit. With your source's rate, which rule closes most batches? How many files per hour does that make?)_ The batch size is 1000 and the time limit is 60 seconds. A batch is written when it has 1000 records or is 60 seconds old, whichever happens first. Since probe.py showed that 9,610 records land per request made every 60 seconds, the batch size rule closes most batches. This results in approximately 577 files per hour (9,610 records per minute divided by 1,000 records per batch, multiplied by 60 minutes).
+
+3. **Offsets after the file.** If the lander crashes after writing a file but before storing offsets, this means that the same raw data will be landed again when lander.py restarts, which demonstrates the at-least-once delivery concept. Although the number of raw records will increase, this is handled further down the pipeline in flow.py's stage() function, where deduplication is performed and only unique Kafka records are kept in the stg_records table. This trade-off is accepted because it is better to potentially process duplicate records than to lose data. Duplicates can be removed during the staging process, whereas lost records cannot be easily recovered.
+
+4. **Duplicates.** Two records are considered the same Kafka record if they have the same topic, partition and offset. The partition identifies which section of the topic contains the record, while the offset identifies its position within that partition. Having the same icao24 and time_position would signal two records being the same real-world observation for OpenSky data. The first type of duplication is removed in the stage() function in flow.py using SELECT DISTINCT * EXCLUDE (landed_at), which removes duplicate landed records while ignoring the landing timestamp. The second type is removed in the entities() function in flow.py using ROW_NUMBER() with PARTITION BY icao24, time_position and QUALIFY ... = 1. This keeps only one record for each aircraft and observation time, choosing the most recent snapshot using ORDER BY snapshot_time DESC.
+
+5. **Windows and time.** _(replace: which time column your analysis uses (event time or landing time), which window size, and why.)_ This pipeline uses event time, derived from time_position, to identify when an aircraft observation actually occurred. The entities() function uses icao24 and time_position to deduplicate observations, ensuring that only one record is kept per aircraft and time. Since the research question in this project focuses on comparing the number of observed airborne aircraft across different countries, rather than analyzing changes over time, window sizes are not relevant in this project. However, if the question were time-based, then event time would be used since it indicates when the events actually happened in real life, rather than when they were received and landed in the system.
+
+6. **Ten times the volume.** The part of the pipeline that break or slow down first at ten times the volume would be the lander since it would have to consume and process a much larger number of records. If the lander cannot consume records as quickly as the producer publishes them, this would result in a backlog in Redpanda. Methods to mitigate this issue would include increasing the batch size and increasing Redpanda resources.
 
 ## Chaos round
 
@@ -54,7 +67,7 @@ From the flow log on the full data (screenshot in `docs/`):
 
 ## Challenges / Obstacles
 
-_(replace: what this source made hard in gathering, processing and analysis, and how you worked through it. What methods and tools did you use?)_
+The OpenSky dataset was different from other datasets provided as examples in class, as it involved REST polling instead of WebSocket streaming. Instead of collecting individual events as they occurred, the producer retrieved snapshots containing multiple aircraft observations. This required adapting the producer to extract individual aircraft records from each response and publish them to Kafka.
 
 ## Analysis
 
@@ -66,8 +79,8 @@ My research question is a comparison question: Which countries have the highest 
 
 ## Reflection
 
-_(replace: about 150 words, first person. What did you learn about streaming systems that you did not know before Thu 22 Oct? What would you do differently if you started again?)_
+From completing this project, I learned about stream processing and how high volumes of live data require a streaming platform to collect, store, and process data efficiently. In this case, I used Apache Kafka to request live data from an external source. I learned that brokers are essentially servers responsible for storing topic partitions and their assigned replicas. They receive records from producers and deliver records to consumers. I also learned how the raw records should be deduplicated and transformed into mart models to provide meaningful insights that answer the research question. This data can also be visualized through charts to make the results easier to understand. If I were to start this project again, I would spend more time fully understanding the overall pipeline and illustrating the architecture before coding. This would help me identify the inputs and outputs of each step of the pipeline as well as how each component interacts.
 
 ## Acknowledgements
 
-_(replace: everyone who helped you and how (classmates, instructor, online sources), code you reused (for example connection code from probe.py), and any AI assistance: what for, and how you checked the result. Write "None" if there is nothing to declare.)_
+Professor Pons helped answer any questions I had during our DS 3022 class. He also provided guide documents to walk students through each step in the project. The files probe.py, four_numbers.py, make_sample.py, and check_project.py were provided as part of the class materials. The files producer.py, lander.py, and flow.py were written using the provided templates quakes_producer.py, quakes_lander.py, and quakes_flow.py, respectively. I used AI assistance to troubleshoot runtime errors as well as cross-checking the logic from the marts() and chart() functions in flow.py. I reviewed the suggested solutions and checked that the code worked as expected.
